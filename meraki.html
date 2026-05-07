@@ -1,0 +1,2256 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cisco Meraki | DnA IT | כל הסניפים. מסך אחד.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================ */
+  /* DnA IT Service Page - Meraki                  */
+  /* ============================================ */
+
+  :root {
+    --bg: #ffffff;
+    --bg-elev: #f7f7f5;
+    --bg-card: #ffffff;
+    --bg-dark: #0a0a0a;
+    --line: #e5e5e2;
+    --line-soft: #ededea;
+    --text: #0a0a0a;
+    --text-dim: #5a5a5a;
+    --text-mute: #888888;
+    --accent: #f4d03f;
+    --accent-strong: #e6c12d;
+    --accent-soft: #fef6c8;
+    --accent-glow: rgba(244, 208, 63, 0.35);
+    --gold: #d4a85a;
+    --radius: 4px;
+    --max: 1280px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans Hebrew', system-ui, sans-serif;
+    font-weight: 400;
+    line-height: 1.7;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 2;
+  }
+
+  h1, h2, h3, h4 {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--text);
+  }
+
+  /* ============ EYEBROW ============ */
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 24px;
+    height: 1px;
+    background: var(--text);
+  }
+
+  /* ============ SECTION BASE ============ */
+  section {
+    padding: 140px 0;
+    position: relative;
+  }
+  .section-head {
+    margin-bottom: 80px;
+    max-width: 760px;
+  }
+  .section-head .eyebrow { margin-bottom: 24px; }
+  .section-head h2 {
+    font-size: clamp(36px, 4.5vw, 56px);
+    font-weight: 800;
+    margin-bottom: 24px;
+    letter-spacing: -0.025em;
+  }
+  .section-head p {
+    font-size: 18px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  /* ============================================ */
+  /* Wi-Fi PULSE MOTIF - Meraki Visual Signature   */
+  /* Reusable, decorative. opacity stays low.      */
+  /* ============================================ */
+  .wifi-pulse {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    pointer-events: none;
+    opacity: 0.45;
+    z-index: 0;
+  }
+  .wifi-pulse svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .wifi-pulse circle {
+    fill: none;
+    stroke: var(--text);
+    stroke-width: 1;
+    transform-origin: center;
+    transform-box: fill-box;
+    animation: wifi-expand 4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+  .wifi-pulse circle:nth-child(1) { animation-delay: 0s; }
+  .wifi-pulse circle:nth-child(2) { animation-delay: 0.8s; }
+  .wifi-pulse circle:nth-child(3) { animation-delay: 1.6s; }
+  .wifi-pulse circle:nth-child(4) { animation-delay: 2.4s; }
+
+  @keyframes wifi-expand {
+    0% {
+      r: 8;
+      opacity: 0;
+      stroke-width: 1.5;
+    }
+    20% {
+      opacity: 0.6;
+    }
+    100% {
+      r: 90;
+      opacity: 0;
+      stroke-width: 0.4;
+    }
+  }
+
+  .wifi-pulse-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: wifi-core 4s ease-in-out infinite;
+  }
+  @keyframes wifi-core {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+    50% { transform: translate(-50%, -50%) scale(1.6); opacity: 0.9; }
+  }
+
+  /* On accent variant (yellow waves on dark bg) */
+  .wifi-pulse.accent circle {
+    stroke: var(--accent);
+  }
+
+  /* ============================================ */
+  /* DOTTED MESH BACKGROUND (Platform Section)     */
+  /* Very subtle "network" feel under cards        */
+  /* ============================================ */
+  .mesh-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(10, 10, 10, 0.18) 1px, transparent 0);
+    background-size: 24px 24px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    opacity: 0.5;
+  }
+  .mesh-bg::after {
+    /* Diagonal connecting lines, very low opacity */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(45deg, transparent 49.5%, rgba(10, 10, 10, 0.04) 50%, transparent 50.5%),
+      linear-gradient(-45deg, transparent 49.5%, rgba(10, 10, 10, 0.04) 50%, transparent 50.5%);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+  }
+
+  /* ============ HERO (Split Layout) ============ */
+  .hero {
+    min-height: 100vh;
+    padding: 120px 0 100px;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: 40%; left: 30%;
+    width: 700px; height: 500px;
+    background: radial-gradient(ellipse, var(--accent-glow), transparent 70%);
+    filter: blur(80px);
+    pointer-events: none;
+  }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 64px;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-text {
+    text-align: right;
+  }
+  .hero .eyebrow {
+    margin-bottom: 32px;
+  }
+  .hero h1 {
+    font-size: clamp(40px, 5.6vw, 80px);
+    font-weight: 800;
+    margin-bottom: 28px;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+  }
+  .hero h1 .accent {
+    background: var(--accent);
+    padding: 0 16px;
+    display: inline-block;
+    transform: skew(-3deg);
+  }
+  .hero-sub {
+    font-size: 19px;
+    color: var(--text-dim);
+    margin-bottom: 40px;
+    line-height: 1.65;
+  }
+  .hero-ctas {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 56px;
+    flex-wrap: wrap;
+  }
+  @media (max-width: 1080px) {
+    .hero-inner {
+      grid-template-columns: 1fr;
+      gap: 64px;
+    }
+    .hero-text { text-align: right; }
+  }
+
+  /* ============ DASHBOARD MOCKUP (Hero Anchor) ============ */
+  .dash-mockup {
+    background: var(--text);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.12),
+      0 24px 64px rgba(0, 0, 0, 0.18);
+    direction: ltr;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--bg);
+    position: relative;
+    transform: translateY(0);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .dash-mockup:hover {
+    transform: translateY(-6px);
+  }
+  /* Title bar */
+  .dash-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .dash-bar .dot-row {
+    display: flex;
+    gap: 6px;
+  }
+  .dash-bar .dot-row span {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+  }
+  .dash-bar .dot-row span:first-child {
+    background: rgba(244, 208, 63, 0.7);
+  }
+  .dash-bar .dash-title {
+    margin-left: 16px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.1em;
+    flex-grow: 1;
+    text-align: center;
+  }
+  .dash-bar .dash-live {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.15em;
+  }
+  .dash-bar .dash-live .live-pulse {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: dash-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes dash-pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(244, 208, 63, 0.6); }
+    50% { opacity: 0.6; box-shadow: 0 0 0 4px rgba(244, 208, 63, 0); }
+  }
+
+  /* Stat row at top */
+  .dash-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 1px;
+  }
+  .dash-stat {
+    background: var(--text);
+    padding: 18px 20px;
+  }
+  .dash-stat .num {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--bg);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .dash-stat .num .accent-text {
+    color: var(--accent);
+  }
+  .dash-stat .label {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* Main mockup body */
+  .dash-body {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 1px;
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .dash-panel {
+    background: var(--text);
+    padding: 20px;
+  }
+  .dash-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .dash-panel-head .h-title {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .dash-panel-head .h-meta {
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* World map (LTR, in left panel) */
+  .dash-map-svg {
+    width: 100%;
+    height: 100px;
+    display: block;
+  }
+  .dash-map-svg .land {
+    fill: rgba(255, 255, 255, 0.06);
+  }
+  .dash-map-svg .map-node {
+    fill: var(--accent);
+  }
+  .dash-map-svg .map-ring {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.2;
+    opacity: 0;
+    animation: map-ping 2.5s ease-out infinite;
+  }
+  @keyframes map-ping {
+    0% { opacity: 0.8; r: 2; }
+    80% { opacity: 0; r: 10; }
+    100% { opacity: 0; r: 10; }
+  }
+
+  /* Traffic graph */
+  .dash-graph {
+    margin-top: 12px;
+    width: 100%;
+    height: 80px;
+    display: block;
+  }
+  .dash-graph .graph-line {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+  }
+  .dash-graph .graph-fill {
+    fill: rgba(244, 208, 63, 0.12);
+  }
+  .dash-graph .graph-axis {
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 1;
+  }
+  .dash-graph .graph-tick {
+    font-size: 8px;
+    fill: rgba(255, 255, 255, 0.3);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Devices list */
+  .dev-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .dev-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 11px;
+  }
+  .dev-list li:last-child { border-bottom: none; }
+  .dev-list .dev-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .dev-list .dev-icon svg {
+    width: 14px;
+    height: 14px;
+    stroke: rgba(255, 255, 255, 0.55);
+    fill: none;
+    stroke-width: 1.6;
+  }
+  .dev-list .dev-name {
+    color: rgba(255, 255, 255, 0.85);
+    flex-grow: 1;
+    font-weight: 500;
+  }
+  .dev-list .dev-count {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 10px;
+    margin-left: auto;
+    margin-right: 8px;
+  }
+  .dev-list .dev-status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dev-list .dev-status.ok {
+    background: #6bcf7f;
+    box-shadow: 0 0 6px rgba(107, 207, 127, 0.5);
+  }
+  .dev-list .dev-status.warn {
+    background: var(--accent);
+    box-shadow: 0 0 6px rgba(244, 208, 63, 0.6);
+    animation: dash-pulse 1.6s ease-in-out infinite;
+  }
+  /* Wi-Fi row: status flips OK -> warn -> OK, simulating real-time state change */
+  .dev-list .dev-status.flicker {
+    animation: dev-flicker 8s ease-in-out infinite;
+  }
+  @keyframes dev-flicker {
+    0%, 35% { background: #6bcf7f; box-shadow: 0 0 6px rgba(107, 207, 127, 0.5); }
+    40%, 65% { background: var(--accent); box-shadow: 0 0 8px rgba(244, 208, 63, 0.7); }
+    70%, 100% { background: #6bcf7f; box-shadow: 0 0 6px rgba(107, 207, 127, 0.5); }
+  }
+
+  /* Live count number (counts up via JS, with subtle glow) */
+  .dash-stat .num.live-num {
+    position: relative;
+    display: inline-block;
+  }
+  .dash-stat .num.live-num::after {
+    content: "";
+    position: absolute;
+    bottom: -3px;
+    right: 0;
+    width: 8px;
+    height: 2px;
+    background: var(--accent);
+    animation: dash-pulse 1.4s ease-in-out infinite;
+  }
+
+  /* Animated graph line (CSS dash-offset trick for "drawing" feel) */
+  .dash-graph .graph-line {
+    stroke-dasharray: 800;
+    stroke-dashoffset: 800;
+    animation: graph-draw 4s ease-out forwards, graph-flow 6s linear 4s infinite;
+  }
+  @keyframes graph-draw {
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes graph-flow {
+    0% { stroke-dasharray: 4 6; stroke-dashoffset: 0; opacity: 1; }
+    100% { stroke-dasharray: 4 6; stroke-dashoffset: -100; opacity: 1; }
+  }
+  .dash-graph .graph-fill {
+    opacity: 0;
+    animation: graph-fade-in 1.2s ease-out 2.8s forwards;
+  }
+  @keyframes graph-fade-in {
+    to { opacity: 1; }
+  }
+
+  /* Live moving dot on graph - "current value" indicator */
+  .dash-graph .graph-cursor {
+    fill: var(--accent);
+    animation: cursor-move 6s linear infinite;
+  }
+  @keyframes cursor-move {
+    0%   { transform: translateX(0px) translateY(0px); }
+    25%  { transform: translateX(80px) translateY(-12px); }
+    50%  { transform: translateX(160px) translateY(-22px); }
+    75%  { transform: translateX(240px) translateY(-32px); }
+    100% { transform: translateX(320px) translateY(-38px); }
+  }
+
+  /* Toast notifications popping up */
+  .dash-toasts {
+    position: absolute;
+    top: 76px;
+    right: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 5;
+    pointer-events: none;
+    direction: ltr;
+  }
+  .dash-toast {
+    background: rgba(244, 208, 63, 0.12);
+    border: 1px solid rgba(244, 208, 63, 0.4);
+    backdrop-filter: blur(8px);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 10px;
+    color: var(--bg);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transform: translateX(20px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    white-space: nowrap;
+  }
+  .dash-toast .toast-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    animation: dash-pulse 1.2s ease-in-out infinite;
+  }
+  .dash-toast .toast-label {
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+  }
+  .dash-toast .toast-name {
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .dash-toast.t1 { animation: toast-pop 8s ease-in-out 2s infinite; }
+  .dash-toast.t2 { animation: toast-pop 8s ease-in-out 5s infinite; }
+  @keyframes toast-pop {
+    0%, 5% { opacity: 0; transform: translateX(20px); }
+    10%, 35% { opacity: 1; transform: translateX(0); }
+    45%, 100% { opacity: 0; transform: translateX(-10px); }
+  }
+
+  @media (max-width: 540px) {
+    .dash-body { grid-template-columns: 1fr; }
+    .dash-stat .num { font-size: 22px; }
+    .dash-toasts { display: none; }
+  }
+
+  /* ============ BUTTONS ============ */
+  .btn {
+    padding: 16px 28px;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-family: 'Noto Sans Hebrew', system-ui, sans-serif;
+  }
+  .btn-primary { background: var(--text); color: var(--bg); }
+  .btn-primary:hover {
+    background: var(--accent);
+    color: var(--text);
+    transform: translateY(-1px);
+  }
+  .btn-secondary {
+    border-color: var(--text);
+    color: var(--text);
+    background: transparent;
+  }
+  .btn-secondary:hover { background: var(--text); color: var(--bg); }
+  .btn::after { content: "←"; transition: transform 0.2s; }
+  .btn:hover::after { transform: translateX(-4px); }
+
+  /* ============ HERO STATS STRIP ============ */
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--text);
+    background: var(--bg);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .hero-stat {
+    padding: 24px 16px;
+    text-align: center;
+    border-left: 1px solid var(--line);
+    transition: background 0.3s ease;
+  }
+  .hero-stat:last-child { border-left: none; }
+  .hero-stat:hover { background: var(--accent-soft); }
+  .hero-stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(24px, 2.6vw, 36px);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    margin-bottom: 10px;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-stat-num .plus { color: var(--accent-strong); font-size: 0.7em; }
+  .hero-stat-num .small {
+    font-size: 0.55em;
+    color: var(--text);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .hero-stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 500;
+  }
+  @media (max-width: 1080px) {
+    .hero-stats { max-width: 720px; margin: 0 auto; }
+  }
+  @media (max-width: 540px) {
+    .hero-stats { grid-template-columns: 1fr; }
+    .hero-stat { border-left: none; border-bottom: 1px solid var(--line); }
+    .hero-stat:last-child { border-bottom: none; }
+  }
+
+  /* ============ TRUST BAR ============ */
+  .trust { padding: 32px 0; background: var(--text); color: var(--bg); }
+  .trust-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 40px; flex-wrap: wrap;
+  }
+  .trust-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+  .trust-items { display: flex; gap: 48px; align-items: center; flex-wrap: wrap; }
+  .trust-badge {
+    display: flex; align-items: center; gap: 10px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 14px; font-weight: 500;
+  }
+  .trust-badge .dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  /* ============================================ */
+  /* SEC 03 - REALITY (Light)                      */
+  /* ============================================ */
+  .reality {
+    background: var(--bg);
+    padding: 140px 0;
+  }
+  .reality-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .reality-card {
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    padding: 48px 36px;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  .reality-card::before {
+    content: "";
+    position: absolute;
+    top: 0; right: 0;
+    width: 32px;
+    height: 4px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+  .reality-card:hover {
+    background: var(--bg);
+    border-color: var(--text);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+  }
+  .reality-card:hover::before { width: 100%; }
+  .reality-card .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-mute);
+    letter-spacing: 0.15em;
+    margin-bottom: 28px;
+    display: block;
+  }
+  .reality-card h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+  .reality-card p {
+    color: var(--text-dim);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  @media (max-width: 968px) {
+    .reality-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ============================================ */
+  /* SEC 04 - SOLUTION BENTO (Elevated Light)      */
+  /* ============================================ */
+  .solution {
+    background: var(--bg-elev);
+    padding: 140px 0;
+    overflow: hidden;
+  }
+  .bento {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 16px;
+    min-height: 620px;
+  }
+  .bento-cell {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 40px 36px;
+    position: relative;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+  .bento-cell::before {
+    content: "";
+    position: absolute;
+    top: 0; right: 0;
+    width: 32px;
+    height: 4px;
+    background: var(--accent);
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bento-cell:hover {
+    border-color: var(--text);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+  }
+  .bento-cell:hover::before { width: 100%; }
+  .bento-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-mute);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .bento-cell h3 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-top: 24px;
+    margin-bottom: 10px;
+  }
+  .bento-cell p {
+    color: var(--text-dim);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .bento-featured {
+    grid-row: span 2;
+    background: var(--text);
+    color: var(--bg);
+    padding: 56px 48px;
+    justify-content: space-between;
+  }
+  .bento-featured::before {
+    background: var(--accent);
+  }
+  .bento-featured .bento-tag {
+    color: var(--accent);
+  }
+  .bento-featured h3 {
+    color: var(--bg);
+    font-size: 28px;
+  }
+  .bento-featured p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 15px;
+  }
+  .bento-mega {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(100px, 14vw, 180px);
+    font-weight: 900;
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    color: var(--bg);
+    margin: 32px 0;
+  }
+  .bento-mega .pct {
+    color: var(--accent);
+    font-size: 0.5em;
+    font-weight: 700;
+  }
+  .bento-mega .small {
+    display: block;
+    font-size: 0.13em;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 16px;
+    line-height: 1.4;
+  }
+  @media (max-width: 968px) {
+    .bento {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+      min-height: auto;
+    }
+    .bento-featured { grid-row: auto; }
+  }
+
+  /* ============================================ */
+  /* SEC 05 - PLATFORM (Light)                     */
+  /* ============================================ */
+  .platform {
+    background: var(--bg);
+    padding: 140px 0;
+    overflow: hidden;
+  }
+  .platform-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .platform-cell {
+    padding: 40px 28px;
+    border-left: 1px solid var(--line);
+    transition: background 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .platform-cell:last-child { border-left: none; }
+  .platform-cell:hover { background: var(--accent-soft); }
+  .platform-cell .icon-box {
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    background: var(--bg);
+    position: relative;
+    z-index: 2;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  /* Hover ripple - emanates from icon-box on hover */
+  .platform-cell .icon-box::before,
+  .platform-cell .icon-box::after {
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 100%; height: 100%;
+    border: 1px solid var(--accent-strong);
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .platform-cell:hover .icon-box::before {
+    animation: cell-ripple 1.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+  .platform-cell:hover .icon-box::after {
+    animation: cell-ripple 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.5s infinite;
+  }
+  @keyframes cell-ripple {
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0.7;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(2.6);
+      opacity: 0;
+    }
+  }
+  .platform-cell:hover .icon-box {
+    background: var(--accent);
+    transform: scale(1.05);
+  }
+  .platform-cell .icon-box svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--text);
+    fill: none;
+    stroke-width: 1.6;
+  }
+  .platform-cell h4 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    letter-spacing: -0.015em;
+  }
+  .platform-cell .pf-en {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .platform-cell p {
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  @media (max-width: 968px) {
+    .platform-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .platform-cell {
+      border-left: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .platform-cell:nth-child(2n) { border-left: none; }
+    .platform-cell:nth-child(5) { grid-column: span 2; }
+  }
+  @media (max-width: 560px) {
+    .platform-grid { grid-template-columns: 1fr; }
+    .platform-cell {
+      border-left: none;
+      border-bottom: 1px solid var(--line);
+    }
+    .platform-cell:nth-child(5) { grid-column: span 1; }
+    .platform-cell:last-child { border-bottom: none; }
+  }
+
+  /* ============================================ */
+  /* SEC 06 - BUSINESS VALUE (Dark - single drama) */
+  /* ============================================ */
+  .biz-value {
+    background: var(--text);
+    color: var(--bg);
+    padding: 160px 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .biz-value::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    pointer-events: none;
+  }
+  .biz-value .section-head h2 { color: var(--bg); }
+  .biz-value .section-head p { color: rgba(255, 255, 255, 0.7); }
+  .biz-value .eyebrow { color: var(--accent); }
+  .biz-value .eyebrow::before { background: var(--accent); }
+
+  .biz-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 72px;
+    align-items: start;
+  }
+  .biz-mega-side {
+    position: sticky;
+    top: 100px;
+  }
+  .biz-mega-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: block;
+  }
+  .biz-mega {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(80px, 10vw, 140px);
+    font-weight: 900;
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    color: var(--bg);
+    margin-bottom: 24px;
+  }
+  .biz-mega-label {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 320px;
+  }
+  .biz-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .biz-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 36px 32px;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  .biz-card:hover {
+    background: rgba(244, 208, 63, 0.05);
+    border-color: rgba(244, 208, 63, 0.3);
+    transform: translateY(-4px);
+  }
+  .biz-card-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 16px;
+    font-weight: 600;
+    display: block;
+  }
+  .biz-card h3 {
+    color: var(--bg);
+    font-size: 22px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .biz-card p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  @media (max-width: 968px) {
+    .biz-layout { grid-template-columns: 1fr; gap: 56px; }
+    .biz-mega-side { position: static; }
+  }
+
+  /* ============================================ */
+  /* SEC 07 - PROCESS STEPPER (Light)              */
+  /* ============================================ */
+  .process {
+    background: var(--bg);
+    padding: 140px 0;
+  }
+  .dna-process-stepper {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    position: relative;
+  }
+  .dna-process-stepper::before {
+    content: "";
+    position: absolute;
+    top: 36px;
+    right: 36px;
+    left: 36px;
+    height: 2px;
+    background: var(--line);
+    z-index: 1;
+  }
+  .dna-process-stepper::after {
+    content: "";
+    position: absolute;
+    top: 36px;
+    right: 36px;
+    height: 2px;
+    width: 0;
+    background: var(--accent);
+    z-index: 1;
+    transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .dna-process-stepper:hover::after {
+    width: calc(100% - 72px);
+  }
+  .dna-step {
+    text-align: center;
+    position: relative;
+    padding: 0 12px;
+  }
+  .dna-step-circle {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    position: relative;
+    z-index: 2;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .dna-step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .dna-step:hover .dna-step-circle {
+    background: var(--accent);
+    transform: scale(1.08);
+  }
+  .dna-step h4 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: var(--text);
+  }
+  .dna-step p {
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  @media (max-width: 968px) {
+    .dna-process-stepper {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px 16px;
+    }
+    .dna-process-stepper::before, .dna-process-stepper::after { display: none; }
+  }
+  @media (max-width: 560px) {
+    .dna-process-stepper { grid-template-columns: 1fr; gap: 0; }
+    .dna-step {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 20px;
+      align-items: center;
+      text-align: right;
+      padding: 16px 0;
+    }
+    .dna-step-circle { margin: 0; }
+  }
+
+  /* ============================================ */
+  /* SEC 08 - EXTENDED MODULES (Elevated Light)    */
+  /* ============================================ */
+  .modules {
+    background: var(--bg-elev);
+    padding: 140px 0;
+  }
+  .modules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .module-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 56px 48px;
+    position: relative;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .module-card::before {
+    content: "";
+    position: absolute;
+    top: 0; right: 0;
+    width: 32px;
+    height: 4px;
+    background: var(--accent);
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .module-card:hover {
+    border-color: var(--text);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+  }
+  .module-card:hover::before { width: 100%; }
+  .module-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 24px;
+    font-weight: 600;
+    display: block;
+  }
+  .module-card h3 {
+    font-size: 30px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+  }
+  .module-card .lede {
+    color: var(--text-dim);
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+  .module-feats {
+    list-style: none;
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+    margin-top: auto;
+  }
+  .module-feats li {
+    font-size: 14px;
+    color: var(--text);
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line-soft);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .module-feats li:last-child { border-bottom: none; }
+  .module-feats li::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+  .module-highlight {
+    margin-top: 24px;
+    padding: 16px 20px;
+    background: var(--accent-soft);
+    border-right: 3px solid var(--accent);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  @media (max-width: 968px) {
+    .modules-grid { grid-template-columns: 1fr; }
+    .module-card { padding: 48px 36px; }
+    .module-card h3 { font-size: 26px; }
+  }
+
+  /* ============================================ */
+  /* SEC 09 - DnA IT VALUE (Light)                 */
+  /* ============================================ */
+  .dna-value {
+    background: var(--bg);
+    padding: 140px 0;
+  }
+  .dna-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .dna-intro h2 {
+    font-size: clamp(36px, 4.5vw, 56px);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    margin-bottom: 32px;
+  }
+  .dna-intro h2 .accent {
+    background: var(--accent);
+    padding: 0 12px;
+    display: inline-block;
+    transform: skew(-3deg);
+  }
+  .dna-intro p {
+    color: var(--text-dim);
+    font-size: 17px;
+    line-height: 1.75;
+  }
+  .dna-points {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+  .dna-point {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 24px;
+    align-items: start;
+    transition: background 0.3s ease;
+  }
+  .dna-point:hover {
+    background: var(--accent-soft);
+    padding: 28px 16px;
+  }
+  .dna-point .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-mute);
+    letter-spacing: 0.15em;
+    padding-top: 4px;
+  }
+  .dna-point h4 {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.015em;
+  }
+  .dna-point p {
+    color: var(--text-dim);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  @media (max-width: 968px) {
+    .dna-grid { grid-template-columns: 1fr; gap: 56px; }
+  }
+
+  /* ============================================ */
+  /* SEC 10 - FINAL CTA (Dark - always)            */
+  /* ============================================ */
+  .final {
+    background: var(--text);
+    color: var(--bg);
+    position: relative;
+    overflow: hidden;
+    padding: 160px 0;
+  }
+  .final::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+  }
+  .final::after {
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px; height: 400px;
+    background: radial-gradient(ellipse, var(--accent-glow), transparent 70%);
+    filter: blur(80px);
+  }
+  .final-inner {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+  .final .eyebrow {
+    color: var(--accent);
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+  .final .eyebrow::before { background: var(--accent); }
+  .final h2 {
+    font-size: clamp(40px, 5.5vw, 72px);
+    font-weight: 800;
+    margin-bottom: 24px;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--bg);
+  }
+  .final h2 .accent {
+    background: var(--accent);
+    color: var(--text);
+    padding: 0 12px;
+    display: inline-block;
+    transform: skew(-3deg);
+  }
+  .final p {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 48px;
+  }
+  .final-ctas {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 56px;
+    flex-wrap: wrap;
+  }
+  .final .btn-primary { background: var(--accent); color: var(--text); }
+  .final .btn-primary:hover { background: var(--bg); }
+  .final .btn-secondary {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: var(--bg);
+  }
+  .final .btn-secondary:hover {
+    border-color: var(--bg);
+    background: var(--bg);
+    color: var(--text);
+  }
+  .final-trust {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .final-trust span {
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  /* ============ FOOTER ============ */
+  footer {
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+    padding: 32px 0;
+  }
+  .foot-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .foot-inner span {
+    color: var(--text-mute);
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .foot-logo {
+    font-weight: 800; font-size: 16px;
+    letter-spacing: -0.02em; color: var(--text);
+  }
+  .foot-logo span {
+    background: var(--accent); padding: 2px 6px; border-radius: 2px;
+  }
+
+  /* ============ RESPONSIVE GLOBAL ============ */
+  @media (max-width: 768px) {
+    .container { padding: 0 20px; }
+    section { padding: 100px 0; }
+    .section-head { margin-bottom: 56px; }
+    .hero { padding: 80px 0 80px; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ============================================ -->
+<!-- 01 - HERO                                     -->
+<!-- ============================================ -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="container">
+    <div class="hero-inner">
+
+      <!-- RIGHT SIDE: Text (in RTL grid, first child = right) -->
+      <div class="hero-text">
+        <div class="eyebrow">01 / Cisco Meraki</div>
+        <h1>כל הסניפים. <span class="accent">מסך אחד</span>.</h1>
+        <p class="hero-sub">
+          ניהול כל תשתיות התקשורת והאבטחה של הארגון מפלטפורמת ענן אחודה.
+          פריסה מהירה, שליטה מלאה וחיסכון בעלויות תפעול, ללא צורך בניהול מקומי.
+        </p>
+        <div class="hero-ctas">
+          <a href="#cta" class="btn btn-primary">לתיאום פגישת אפיון</a>
+          <a href="#platform" class="btn btn-secondary">מה הפלטפורמה כוללת</a>
+        </div>
+
+        <!-- Hero Stats Strip -->
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-num">90<span class="plus">%</span></div>
+            <div class="hero-stat-label">חיסכון תפעולי</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num"><span class="small">Zero-Touch</span></div>
+            <div class="hero-stat-label">פריסה ללא טכנאי</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num"><span class="small">Dashboard</span></div>
+            <div class="hero-stat-label">ניהול מרכזי</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEFT SIDE: Dashboard Mockup (in RTL grid, second child = left) -->
+      <div class="hero-mockup">
+        <div class="dash-mockup" aria-hidden="true">
+
+          <!-- Title bar (macOS style) -->
+          <div class="dash-bar">
+            <div class="dot-row">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="dash-title">meraki.dna-it.cloud / dashboard</div>
+            <div class="dash-live">
+              <span class="live-pulse"></span>LIVE
+            </div>
+          </div>
+
+          <!-- Live toast notifications popping up -->
+          <div class="dash-toasts">
+            <div class="dash-toast t1">
+              <span class="toast-dot"></span>
+              <span class="toast-label">[ EVENT ]</span>
+              <span class="toast-name">Branch online</span>
+            </div>
+            <div class="dash-toast t2">
+              <span class="toast-dot"></span>
+              <span class="toast-label">[ SYNC ]</span>
+              <span class="toast-name">Config pushed</span>
+            </div>
+          </div>
+
+          <!-- Stats row -->
+          <div class="dash-stats">
+            <div class="dash-stat">
+              <div class="num live-num" data-target="1247">0</div>
+              <div class="label">// Active Devices</div>
+            </div>
+            <div class="dash-stat">
+              <div class="num">23 <span class="accent-text">/</span> 23</div>
+              <div class="label">// Sites Online</div>
+            </div>
+          </div>
+
+          <!-- Main body: Map + Graph (left) + Devices (right) -->
+          <div class="dash-body">
+
+            <!-- Left panel: World map + traffic graph -->
+            <div class="dash-panel">
+              <div class="dash-panel-head">
+                <span class="h-title">// Network Topology</span>
+                <span class="h-meta">7 regions</span>
+              </div>
+
+              <!-- Mini world map (LTR, simplified) -->
+              <svg class="dash-map-svg" viewBox="0 0 320 100" xmlns="http://www.w3.org/2000/svg">
+                <!-- Simplified continent shapes -->
+                <path class="land" d="M 20 35 Q 35 28 55 32 L 70 38 Q 80 42 78 52 L 70 58 Q 55 62 40 60 L 25 55 Q 18 48 20 35 Z" />
+                <path class="land" d="M 90 30 Q 110 25 135 30 L 155 38 Q 165 48 158 58 L 145 65 Q 120 68 100 62 L 85 50 Q 82 38 90 30 Z" />
+                <path class="land" d="M 175 35 Q 195 30 215 35 L 230 42 Q 238 50 230 58 L 215 65 Q 195 68 178 62 L 168 50 Q 168 40 175 35 Z" />
+                <path class="land" d="M 245 38 Q 268 32 285 38 L 295 48 Q 295 58 285 64 L 268 68 Q 250 65 242 56 Q 238 46 245 38 Z" />
+
+                <!-- Connection nodes with pings -->
+                <circle class="map-ring" cx="50" cy="45" r="2" style="animation-delay: 0s;" />
+                <circle class="map-node" cx="50" cy="45" r="2.5" />
+
+                <circle class="map-ring" cx="115" cy="42" r="2" style="animation-delay: 0.4s;" />
+                <circle class="map-node" cx="115" cy="42" r="2.5" />
+
+                <circle class="map-ring" cx="135" cy="55" r="2" style="animation-delay: 0.8s;" />
+                <circle class="map-node" cx="135" cy="55" r="2.5" />
+
+                <circle class="map-ring" cx="200" cy="50" r="2" style="animation-delay: 1.2s;" />
+                <circle class="map-node" cx="200" cy="50" r="2.5" />
+
+                <circle class="map-ring" cx="265" cy="48" r="2" style="animation-delay: 0.2s;" />
+                <circle class="map-node" cx="265" cy="48" r="2.5" />
+
+                <!-- Connection lines -->
+                <line x1="50" y1="45" x2="115" y2="42" stroke="rgba(244,208,63,0.3)" stroke-width="0.5" stroke-dasharray="2 2"/>
+                <line x1="115" y1="42" x2="200" y2="50" stroke="rgba(244,208,63,0.3)" stroke-width="0.5" stroke-dasharray="2 2"/>
+                <line x1="200" y1="50" x2="265" y2="48" stroke="rgba(244,208,63,0.3)" stroke-width="0.5" stroke-dasharray="2 2"/>
+                <line x1="135" y1="55" x2="200" y2="50" stroke="rgba(244,208,63,0.3)" stroke-width="0.5" stroke-dasharray="2 2"/>
+              </svg>
+
+              <!-- Traffic graph -->
+              <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06);">
+                <div class="dash-panel-head" style="margin-bottom: 8px; padding-bottom: 0; border: none;">
+                  <span class="h-title">// Traffic / 24h</span>
+                  <span class="h-meta">+12.4%</span>
+                </div>
+                <svg class="dash-graph" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                  <!-- Axis lines -->
+                  <line class="graph-axis" x1="0" y1="20" x2="320" y2="20" />
+                  <line class="graph-axis" x1="0" y1="40" x2="320" y2="40" />
+                  <line class="graph-axis" x1="0" y1="60" x2="320" y2="60" />
+
+                  <!-- Filled area under line -->
+                  <path class="graph-fill"
+                        d="M 0 60 L 20 52 L 40 55 L 60 42 L 80 38 L 100 44 L 120 30 L 140 28 L 160 35 L 180 22 L 200 18 L 220 24 L 240 32 L 260 26 L 280 20 L 300 28 L 320 22 L 320 80 L 0 80 Z" />
+
+                  <!-- Line -->
+                  <path class="graph-line"
+                        d="M 0 60 L 20 52 L 40 55 L 60 42 L 80 38 L 100 44 L 120 30 L 140 28 L 160 35 L 180 22 L 200 18 L 220 24 L 240 32 L 260 26 L 280 20 L 300 28 L 320 22" />
+
+                  <!-- Live cursor dot moving along the line -->
+                  <circle class="graph-cursor" cx="0" cy="60" r="3" />
+
+                  <!-- Tick labels -->
+                  <text class="graph-tick" x="2" y="78">00:00</text>
+                  <text class="graph-tick" x="148" y="78">12:00</text>
+                  <text class="graph-tick" x="290" y="78">23:59</text>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Right panel: Devices list -->
+            <div class="dash-panel">
+              <div class="dash-panel-head">
+                <span class="h-title">// Devices</span>
+                <span class="h-meta">All synced</span>
+              </div>
+              <ul class="dev-list">
+                <li>
+                  <div class="dev-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 4 L12 7 M12 17 L12 20 M4 12 L7 12 M17 12 L20 12"/></svg>
+                  </div>
+                  <span class="dev-name">Routers</span>
+                  <span class="dev-count">412</span>
+                  <span class="dev-status ok"></span>
+                </li>
+                <li>
+                  <div class="dev-icon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="6" rx="1"/><path d="M7 9 L7 6 M11 9 L11 6 M15 9 L15 6 M19 9 L19 6"/></svg>
+                  </div>
+                  <span class="dev-name">Switches</span>
+                  <span class="dev-count">186</span>
+                  <span class="dev-status ok"></span>
+                </li>
+                <li>
+                  <div class="dev-icon">
+                    <svg viewBox="0 0 24 24"><path d="M2 9 Q12 1 22 9 M5 13 Q12 7 19 13 M8 17 Q12 14 16 17" stroke-linecap="round"/><circle cx="12" cy="20" r="0.8" fill="currentColor"/></svg>
+                  </div>
+                  <span class="dev-name">Wi-Fi APs</span>
+                  <span class="dev-count">521</span>
+                  <span class="dev-status flicker"></span>
+                </li>
+                <li>
+                  <div class="dev-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 3 L20 6 L20 12 Q20 18 12 21 Q4 18 4 12 L4 6 Z"/></svg>
+                  </div>
+                  <span class="dev-name">Security</span>
+                  <span class="dev-count">68</span>
+                  <span class="dev-status ok"></span>
+                </li>
+                <li>
+                  <div class="dev-icon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="7" width="14" height="10" rx="1"/><path d="M17 10 L21 7 L21 17 L17 14 Z"/></svg>
+                  </div>
+                  <span class="dev-name">Cameras</span>
+                  <span class="dev-count">60</span>
+                  <span class="dev-status ok"></span>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 02 - TRUST BAR                                -->
+<!-- ============================================ -->
+<section class="trust">
+  <div class="container">
+    <div class="trust-inner">
+      <div class="trust-label">// שותף מקצועי של Cisco Meraki</div>
+      <div class="trust-items">
+        <div class="trust-badge"><span class="dot"></span>פריסה ארגונית רב-אתרית</div>
+        <div class="trust-badge"><span class="dot"></span>אינטגרציה Turn-Key</div>
+        <div class="trust-badge"><span class="dot"></span>תמיכה 24/7</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 03 - REALITY (The problem, calmly framed)     -->
+<!-- ============================================ -->
+<section class="reality">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">03 / המציאות</div>
+      <h2>ניהול רב-אתרי. בדרך הישנה.</h2>
+      <p>
+        ככל שהארגון גדל, כך גדלה המורכבות התפעולית של הרשת.
+        ריבוי ספקים, ציוד מבוזר, וצורך תמידי בנוכחות פיזית הופכים את התחזוקה השוטפת לנטל יקר.
+      </p>
+    </div>
+    <div class="reality-grid">
+      <div class="reality-card">
+        <span class="num">01</span>
+        <h3>פיצול ממשקים</h3>
+        <p>עבודה מול עשרות ספקים וציוד שונה בכל אתר. כל קונסולה. כל ממשק. כל מתודולוגיה.</p>
+      </div>
+      <div class="reality-card">
+        <span class="num">02</span>
+        <h3>לוגיסטיקה מורכבת</h3>
+        <p>כל עדכון או שינוי תצורה דורש הגעה פיזית של טכנאי לסניף. פריסה של אתר חדש נמשכת ימים.</p>
+      </div>
+      <div class="reality-card">
+        <span class="num">03</span>
+        <h3>חוסר ויזיביליות</h3>
+        <p>אבחון תקלה מרחוק הופך לאתגר. זמני התגובה איטיים והעלויות מצטברות.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 04 - SOLUTION BENTO (Mega 90% featured)       -->
+<!-- ============================================ -->
+<section class="solution">
+  <!-- Wi-Fi pulse motif (decorative, low opacity) -->
+  <div class="wifi-pulse" style="top: 80px; left: -60px; width: 280px; height: 280px;">
+    <svg viewBox="-100 -100 200 200" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="0" cy="0" r="8" />
+      <circle cx="0" cy="0" r="8" />
+      <circle cx="0" cy="0" r="8" />
+      <circle cx="0" cy="0" r="8" />
+    </svg>
+    <div class="wifi-pulse-core"></div>
+  </div>
+
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">04 / הפתרון</div>
+      <h2>מודל הענן של Meraki.</h2>
+      <p>
+        חומרה, תוכנה ושירותי ענן ביחידה אחת. הפלטפורמה לא רק מחברת מכשירים, היא משנה את אופן ניהול הרשת.
+      </p>
+    </div>
+
+    <div class="bento">
+      <!-- Featured: Mega 90% on dark -->
+      <div class="bento-cell bento-featured">
+        <span class="bento-tag">// Featured</span>
+        <div>
+          <div class="bento-mega">
+            90<span class="pct">%</span>
+            <span class="small">חיסכון בעלויות התפעול<br/>לעומת ארכיטקטורה מסורתית</span>
+          </div>
+        </div>
+        <div>
+          <h3>פחות שעות איש IT.<br/>פחות נסיעות לשטח.</h3>
+          <p>צמצום דרמטי בזמן הצוות שמושקע בתחזוקה שוטפת, בפריסת אתרים חדשים ובאבחון תקלות מרחוק.</p>
+        </div>
+      </div>
+
+      <!-- Cell 2 -->
+      <div class="bento-cell">
+        <span class="bento-tag">// 01 Zero-Touch</span>
+        <h3>פריסה ללא טכנאי</h3>
+        <p>מוציאים מהקופסה, מחברים לחשמל ולאינטרנט. המכשיר מקבל הגדרות אוטומטית מהענן, ופועל.</p>
+      </div>
+
+      <!-- Cell 3 -->
+      <div class="bento-cell">
+        <span class="bento-tag">// 02 Dashboard</span>
+        <h3>דשבורד אחד מאוחד</h3>
+        <p>ניהול תצורה, ניטור וטיפול בתקלות לכל הסניפים, מאותו מסך. בזמן אמת, מכל מקום.</p>
+      </div>
+
+      <!-- Cell 4 -->
+      <div class="bento-cell">
+        <span class="bento-tag">// 03 Performance</span>
+        <h3>ביצועים ללא פשרות</h3>
+        <p>Web Cache להפחתת שימוש ברוחב פס. QoS ו-SD-WAN לתיעדוף יישומים עסקיים קריטיים.</p>
+      </div>
+
+      <!-- Cell 5 -->
+      <div class="bento-cell">
+        <span class="bento-tag">// 04 Visibility</span>
+        <h3>שקיפות מלאה</h3>
+        <p>אבחון מרחוק, ניטור אוטומטי והתראות. סנכרון תצורה לכל מכשיר מחובר ברחבי הארגון.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 05 - PLATFORM PORTFOLIO                       -->
+<!-- ============================================ -->
+<section class="platform" id="platform">
+  <!-- Subtle dotted mesh background, gives "network" feel -->
+  <div class="mesh-bg"></div>
+  <!-- Wi-Fi pulse motif on right side (RTL) -->
+  <div class="wifi-pulse" style="top: 60px; right: -80px; width: 260px; height: 260px;">
+    <svg viewBox="-100 -100 200 200" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="0" cy="0" r="8" />
+      <circle cx="0" cy="0" r="8" />
+      <circle cx="0" cy="0" r="8" />
+      <circle cx="0" cy="0" r="8" />
+    </svg>
+    <div class="wifi-pulse-core"></div>
+  </div>
+
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">05 / הפלטפורמה</div>
+      <h2>מערכת אקולוגית שלמה. נקודת קצה אחת.</h2>
+      <p>
+        פורטפוליו רחב של חומרה ותוכנה, שכולו מנוהל מהדשבורד המרכזי של Meraki.
+      </p>
+    </div>
+
+    <div class="platform-grid">
+      <div class="platform-cell">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 4 L12 7 M12 17 L12 20 M4 12 L7 12 M17 12 L20 12 M6 6 L8 8 M16 16 L18 18 M6 18 L8 16 M16 8 L18 6"/></svg>
+        </div>
+        <h4>נתבים אלחוטיים</h4>
+        <span class="pf-en">Routers</span>
+        <p>קישוריות רציפה לכלל הסניפים, עם ניהול עומסים מרכזי.</p>
+      </div>
+      <div class="platform-cell">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="6" rx="1"/><path d="M7 9 L7 6 M11 9 L11 6 M15 9 L15 6 M19 9 L19 6 M7 18 L7 15 M11 18 L11 15 M15 18 L15 15 M19 18 L19 15"/></svg>
+        </div>
+        <h4>מתגי תקשורת</h4>
+        <span class="pf-en">Switches</span>
+        <p>תשתית קווית עוצמתית עם ניטור פורטים מלא ובקרה מהדשבורד.</p>
+      </div>
+      <div class="platform-cell">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><path d="M2 9 Q12 1 22 9 M5 13 Q12 7 19 13 M8 17 Q12 14 16 17 M12 21 L12 21.01" stroke-linecap="round"/></svg>
+        </div>
+        <h4>רשת אלחוטית</h4>
+        <span class="pf-en">Wi-Fi</span>
+        <p>נקודות גישה עם אופטימיזציה אוטומטית, אנליטיקה מובנית.</p>
+      </div>
+      <div class="platform-cell">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><path d="M12 3 L20 6 L20 12 Q20 18 12 21 Q4 18 4 12 L4 6 Z"/></svg>
+        </div>
+        <h4>אבטחת רשת</h4>
+        <span class="pf-en">Security</span>
+        <p>חומת אש מובנית בענן, עם בקרה מאוחדת לכל הארגון.</p>
+      </div>
+      <div class="platform-cell">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><rect x="3" y="7" width="14" height="10" rx="1"/><path d="M17 10 L21 7 L21 17 L17 14 Z"/></svg>
+        </div>
+        <h4>מערך מצלמות</h4>
+        <span class="pf-en">MV</span>
+        <p>רכיב משלים בארכיטקטורת הרשת, מנוהל מאותו דשבורד.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 06 - BUSINESS VALUE (Dark - single drama)     -->
+<!-- ============================================ -->
+<section class="biz-value">
+  <!-- Accent Wi-Fi pulse motif on dark bg, top-right (RTL) -->
+  <div class="wifi-pulse accent" style="top: 100px; right: 40px; width: 320px; height: 320px; opacity: 0.35;">
+    <svg viewBox="-100 -100 200 200" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="0" cy="0" r="8" />
+      <circle cx="0" cy="0" r="8" />
+      <circle cx="0" cy="0" r="8" />
+      <circle cx="0" cy="0" r="8" />
+    </svg>
+    <div class="wifi-pulse-core"></div>
+  </div>
+
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">06 / הערך העסקי</div>
+      <h2>כשרשת התקשורת הופכת למנוע צמיחה.</h2>
+      <p>
+        Meraki מספקת דאטה עסקי שלא ידעתם שקיים ברשת שלכם. תובנות שנובעות מהתשתית, ומופכות לערך עסקי מדיד.
+      </p>
+    </div>
+
+    <div class="biz-layout">
+      <!-- Left: Mega API -->
+      <div class="biz-mega-side">
+        <span class="biz-mega-tag">// OPEN API</span>
+        <div class="biz-mega">API</div>
+        <p class="biz-mega-label">
+          ממשק פתוח לשילוב נתוני הרשת והמיקום עם CRM ויישומי צד ג', והפיכת הנתונים לפעולות עסקיות בזמן אמת.
+        </p>
+      </div>
+
+      <!-- Right: 3 dark cards -->
+      <div class="biz-cards">
+        <div class="biz-card">
+          <span class="biz-card-tag">// ANALYTICS</span>
+          <h3>אנליטיקה עסקית</h3>
+          <p>
+            ניתוח קצב נוכחות באתר, מדידת זמן שהייה, פילוח מבקרים חדשים מול חוזרים.
+            כלי מדידה אקטיבי להשפעה של פרסום, קידום מכירות ופופולריות מוצר.
+          </p>
+        </div>
+        <div class="biz-card">
+          <span class="biz-card-tag">// LOCATION</span>
+          <h3>מיקום בזמן אמת</h3>
+          <p>
+            ניתוח מובנה של מיקום, משולב בטכנולוגיית האלחוט.
+            ללא חיישנים נוספים, ללא רכיבים נוספים, ללא תוכנות ייעודיות.
+          </p>
+        </div>
+        <div class="biz-card">
+          <span class="biz-card-tag">// INTEGRATION</span>
+          <h3>אינטגרציה ארגונית</h3>
+          <p>
+            ממשק פתוח הניתן להתאמה. שילוב נתוני מיקום עם תוכנות צד ג' דוגמת CRM,
+            ויישומים מותאמים אישית למבצעים ממוקדים בזמן אמת.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 07 - PROCESS STEPPER                          -->
+<!-- ============================================ -->
+<section class="process">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">07 / תהליך הפריסה</div>
+      <h2>חמישה שלבים. מאפיון לפריסה ארצית.</h2>
+      <p>
+        תהליך מסודר שמבטיח התאמה מדויקת לצרכים העסקיים, פריסה מהירה וליווי שוטף לאחר ההפעלה.
+      </p>
+    </div>
+
+    <div class="dna-process-stepper">
+      <div class="dna-step">
+        <div class="dna-step-circle"><span class="dna-step-num">01</span></div>
+        <h4>אפיון</h4>
+        <p>מיפוי מבנה הסניפים, וקטורי התקשורת והצרכים העסקיים.</p>
+      </div>
+      <div class="dna-step">
+        <div class="dna-step-circle"><span class="dna-step-num">02</span></div>
+        <h4>אדריכלות</h4>
+        <p>תכנון מבנה הענן, רשתות VLAN ופרופילי האבטחה.</p>
+      </div>
+      <div class="dna-step">
+        <div class="dna-step-circle"><span class="dna-step-num">03</span></div>
+        <h4>פריסה</h4>
+        <p>שילוח ציוד מוגדר מראש לאתרים. חיבור Zero-Touch מהיר.</p>
+      </div>
+      <div class="dna-step">
+        <div class="dna-step-circle"><span class="dna-step-num">04</span></div>
+        <h4>הגדרה</h4>
+        <p>סנכרון מלא מול הדשבורד המרכזי, החלת מדיניות ארגונית.</p>
+      </div>
+      <div class="dna-step">
+        <div class="dna-step-circle"><span class="dna-step-num">05</span></div>
+        <h4>ליווי</h4>
+        <p>ניטור שוטף, תמיכה וייעוץ להרחבות עתידיות.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 08 - EXTENDED MODULES                         -->
+<!-- ============================================ -->
+<section class="modules">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">08 / מודולים מורחבים</div>
+      <h2>שני מודולים נלווים לפלטפורמה.</h2>
+      <p>
+        Meraki Core היא הליבה. שני המודולים האלה משלימים את הפלטפורמה ומרחיבים אותה ליכולות אבטחת גישה ולתובנות מרחב פיזי.
+      </p>
+    </div>
+
+    <div class="modules-grid">
+      <!-- Module 1: Access Manager -->
+      <div class="module-card">
+        <span class="module-tag">// מודול נלווה: NAC</span>
+        <h3>Access Manager</h3>
+        <p class="lede">
+          בקרת גישה לרשת מנוהלת בענן. ניהול זהויות וגישה מבוססת הקשר לאנשים ולמכשירים שמתחברים לרשת הארגונית.
+        </p>
+        <ul class="module-feats">
+          <li>אכיפה ופיקוח על זהות וגישה</li>
+          <li>בקרה לפי הקשר: משתמש, מכשיר, מיקום</li>
+          <li>ניהול גישה לאנשים ולמכשירים מחוברים</li>
+        </ul>
+        <div class="module-highlight">
+          משולב באותו דשבורד של Meraki. אותה חוויית ניהול, יכולת מורחבת.
+        </div>
+      </div>
+
+      <!-- Module 2: Cisco Spaces -->
+      <div class="module-card">
+        <span class="module-tag">// מוצר נלווה: ניהול מתחמים</span>
+        <h3>Cisco Spaces</h3>
+        <p class="lede">
+          תובנות עומק מהמרחב הפיזי, על בסיס תשתית ה-Wi-Fi הקיימת. ניטור נכסים, ניהול עומסים, חוויית מבקרים ועמידה ברגולציות IoT.
+        </p>
+        <ul class="module-feats">
+          <li>ניטור נכסים בזמן אמת ברחבי הרשת</li>
+          <li>ניהול עומסים ותפוסה במרחבים הארגוניים</li>
+          <li>עמידה ברגולציה דרך ניהול מכשירי IoT</li>
+          <li>חיבור Wi-Fi פשוט ונוח למבקרים ולאורחים</li>
+        </ul>
+        <div class="module-highlight">
+          ממנף את תשתית ה-Wi-Fi הקיימת. אין צורך ברכיבי חומרה נוספים.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 09 - DnA IT VALUE                             -->
+<!-- ============================================ -->
+<section class="dna-value">
+  <div class="container">
+    <div class="dna-grid">
+      <div class="dna-intro">
+        <div class="eyebrow" style="margin-bottom: 24px;">09 / מה מביאה DnA IT</div>
+        <h2>אנחנו מביאים את ה-<span class="accent">Experience</span> לארכיטקטורה.</h2>
+        <p>
+          הצוות של DnA IT מבצע אינטגרציה Turn-Key מלאה. מאפיון עומק של הצרכים העסקיים,
+          דרך תכנון אדריכלי מדויק, חיבור למערכות הארגוניות הקיימות, ועד תמיכה רציפה לאחר ההפעלה.
+          המטרה: שהרשת תעבוד בשבילכם, ולא אתם בשבילה.
+        </p>
+      </div>
+
+      <div class="dna-points">
+        <div class="dna-point">
+          <span class="num">01</span>
+          <div>
+            <h4>פריסה ארגונית רב-אתרית</h4>
+            <p>ניסיון בתכנון ופריסה של רשתות מורכבות עם עשרות ומאות סניפים.</p>
+          </div>
+        </div>
+        <div class="dna-point">
+          <span class="num">02</span>
+          <div>
+            <h4>אינטגרציה Turn-Key</h4>
+            <p>אפיון, תכנון, פריסה, הגדרה והדרכה. תהליך מסודר מקצה לקצה.</p>
+          </div>
+        </div>
+        <div class="dna-point">
+          <span class="num">03</span>
+          <div>
+            <h4>אינטגרציה עם מערכות ארגוניות</h4>
+            <p>חיבור מובנה למערכות AD, CRM ויישומים ארגוניים נוספים דרך ה-API הפתוח.</p>
+          </div>
+        </div>
+        <div class="dna-point">
+          <span class="num">04</span>
+          <div>
+            <h4>תמיכה שוטפת והרחבות</h4>
+            <p>ליווי טכני שוטף, ייעוץ להרחבות, ותמיכה ברכיבי הפלטפורמה ובמודולים הנלווים.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 10 - FINAL CTA (Dark - always)                -->
+<!-- ============================================ -->
+<section class="final" id="cta">
+  <div class="container">
+    <div class="final-inner">
+      <div class="eyebrow">10 / השלב הבא</div>
+      <h2>מוכנים לנהל <span class="accent">חכם יותר</span>?</h2>
+      <p>בואו נהפוך את רשת התקשורת שלכם למנוע צמיחה יעיל וחסכוני. נתחיל באפיון של הצרכים והאתגרים.</p>
+      <div class="final-ctas">
+        <a href="#" class="btn btn-primary">לתיאום פגישת אפיון</a>
+        <a href="#" class="btn btn-secondary">WhatsApp ישיר</a>
+      </div>
+      <div class="final-trust">
+        <span>// שותף Cisco Meraki</span>
+        <span>// פריסה רב-אתרית</span>
+        <span>// אינטגרציה Turn-Key</span>
+        <span>// תמיכה 24/7</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- FOOTER                                        -->
+<!-- ============================================ -->
+<footer>
+  <div class="container">
+    <div class="foot-inner">
+      <div class="foot-logo">DnA<span>IT</span></div>
+      <span>// Architects of Enterprise Infrastructure</span>
+      <span>© 2026 DnA IT</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* Live count-up for dashboard mockup. Pure vanilla JS, no libs. */
+  (function() {
+    var nums = document.querySelectorAll('.live-num[data-target]');
+    if (!nums.length) return;
+
+    function animate(el) {
+      var target = parseInt(el.getAttribute('data-target'), 10);
+      if (isNaN(target)) return;
+      var start = 0;
+      var duration = 1800;
+      var startTime = null;
+
+      function step(ts) {
+        if (!startTime) startTime = ts;
+        var progress = Math.min((ts - startTime) / duration, 1);
+        // ease-out cubic
+        var eased = 1 - Math.pow(1 - progress, 3);
+        var current = Math.floor(start + (target - start) * eased);
+        el.textContent = current.toLocaleString('en-US');
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          el.textContent = target.toLocaleString('en-US');
+        }
+      }
+      requestAnimationFrame(step);
+    }
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            animate(entry.target);
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.3 });
+      nums.forEach(function(n) { io.observe(n); });
+    } else {
+      nums.forEach(animate);
+    }
+  })();
+
+  /* Reveal-on-scroll for cards. Adds .in-view class when an element scrolls into view.
+     Used to trigger subtle entrance animations defined in CSS. */
+  (function() {
+    var els = document.querySelectorAll('[data-reveal]');
+    if (!els.length || !('IntersectionObserver' in window)) {
+      els.forEach(function(el) { el.classList.add('in-view'); });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    els.forEach(function(el) { io.observe(el); });
+  })();
+</script>
+
+</body>
+</html>
